@@ -1,5 +1,5 @@
-// const sudoTimeout = 1000 * 60 * 5; // 5 minutes
-const sudoTimeout = 1000 * 10; // 10 seconds
+const sudoTimeout = 1000 * 60 * 5; // 5 minutes
+// const sudoTimeout = 1000 * 10; // 10 seconds
 const sudoersGID = '792816454407553075';
 const suGID = '782265818015858749';
 
@@ -15,12 +15,16 @@ const config = {
 }
 
 
-function removeSudo(msgObj) {
+function removeSudo(msg) {
+  const memberDisplayName = msg.member.displayName + " (" + msg.member.id + ")";
+
   if(config.hasOwnProperty(msg.guild.id)) {
     const suGID = config[msg.guild.id].suGID;
 
-    msgObj.member.roles.remove(suGID);
-    msgObj.channel.send(msgObj.member + " has lost admin access.");
+    msg.member.roles.remove(suGID);
+    msg.channel.send(memberDisplayName + " has lost admin access.");
+  } else {
+    msg.channel.send("Unable to remove sudo access from " + memberDisplayName)
   }
 }
 
