@@ -1,5 +1,5 @@
 {
-  "name": "rapture-toy-manager",
+  "name": "sudo-bot",
   "version": "1.0.0",
   "description": "Discord bot for Rapture",
   "main": "index.js",
