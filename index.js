@@ -15,7 +15,7 @@ const TOKEN = process.env.TOKEN;
 const PREFIX = '&';
 
 // Discord.js Declarations
-const bot = new Discord.Client();
+const bot = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 bot.commands = new Discord.Collection();
 
 // Load Commands
@@ -45,7 +45,7 @@ bot.on('message', msg => {
     try {
       bot.commands.get(command).execute(msg, args);
     } catch (error) {
-      logger.error(error);
+      logger.error(JSON.stringify(error));
       msg.reply('there was an error trying to execute that command!');
     }
   }
