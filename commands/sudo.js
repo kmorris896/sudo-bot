@@ -2,7 +2,7 @@ const winston = require('winston');
 
 // Winston Logger Declarations
 const logger = winston.createLogger({
-  level: 'debug',
+  level: 'info',
   transports: [
     new winston.transports.Console({format: winston.format.combine(winston.format.colorize(), winston.format.simple())})
   ]
@@ -18,7 +18,7 @@ const config = {
   },
   "752074304224755752": {
     "sudoersGID": "792877181311254528",
-    "suGID": "752090254021885993"
+    "suGID": "792881943888134154"
   }
 }
 
