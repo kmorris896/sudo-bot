@@ -1,7 +1,15 @@
-const sudoTimeout = 1000 * 60 * 5; // 5 minutes
-// const sudoTimeout = 1000 * 10; // 10 seconds
-const sudoersGID = '792816454407553075';
-const suGID = '782265818015858749';
+const winston = require('winston');
+
+// Winston Logger Declarations
+const logger = winston.createLogger({
+  level: 'debug',
+  transports: [
+    new winston.transports.Console({format: winston.format.combine(winston.format.colorize(), winston.format.simple())})
+  ]
+});
+
+const sudoTimeout = 1000 * 60 * (process.env.SUDO_TIMEOUT || 5); // Default: 5 minutes
+logger.info("sudoTimeout: " + sudoTimeout + " (" + (sudoTimeout/(1000*60)) + " minutes).");
 
 const config = {
   "704057794571272362": {
@@ -13,7 +21,6 @@ const config = {
     "suGID": "752090254021885993"
   }
 }
-
 
 function removeSudo(msg) {
   const memberDisplayName = msg.member.displayName + " (" + msg.member.id + ")";
@@ -37,14 +44,26 @@ module.exports = {
 
       // Look up the configuration for the server
       if(config.hasOwnProperty(msg.guild.id)) {
+        logger.info(memberDisplayName + " invoked admin access.");
         const sudoersGID = config[msg.guild.id].sudoersGID;
         const suGID = config[msg.guild.id].suGID;
 
+        logger.debug("Checking " + memberDisplayName + " for roleID " + sudoersGID);
         if(msg.member.roles.cache.has(sudoersGID)) {
-          msg.member.roles.add(suGID);
-          setTimeout(removeSudo, sudoTimeout, msg);
-          logger.info(memberDisplayName + " invoked admin access.");
-          msg.channel.send(memberDisplayName + " now has admin access for " + (sudoTimeout/(1000*60)) + " minutes.");
+          logger.debug(memberDisplayName + " has sudoersGID.  Attempting to add admin role " + suGID);
+
+          // Try granting admin role
+          
+          msg.member.roles.add(suGID)
+          .then(value => {
+            setTimeout(removeSudo, sudoTimeout, msg); 
+            msg.channel.send(memberDisplayName + " now has admin access for " + (sudoTimeout/(1000*60)) + " minutes.");
+          })
+          .catch(err => {
+            msg.reply("Unable to add admin access.  Please see bot log for details.");
+            logger.error("Unable to add admin roleID to " + memberDisplayName);
+            logger.error(err);
+          });
         }
       }
     },
