@@ -22,6 +22,7 @@ function removeSudo(msg) {
     const suGID = config[msg.guild.id].suGID;
 
     msg.member.roles.remove(suGID);
+    logger.info(memberDisplayName + " admin access revoked.");
     msg.channel.send(memberDisplayName + " has lost admin access.");
   } else {
     msg.channel.send("Unable to remove sudo access from " + memberDisplayName)
@@ -42,6 +43,7 @@ module.exports = {
         if(msg.member.roles.cache.has(sudoersGID)) {
           msg.member.roles.add(suGID);
           setTimeout(removeSudo, sudoTimeout, msg);
+          logger.info(memberDisplayName + " invoked admin access.");
           msg.channel.send(memberDisplayName + " now has admin access for " + (sudoTimeout/(1000*60)) + " minutes.");
         }
       }
